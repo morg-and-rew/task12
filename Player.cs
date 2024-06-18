@@ -2,23 +2,20 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private float _speed;
+    [SerializeField] private float _speed = 2f;
+    private float _horizontalSpeed = 0f;
+    private float _verticalSpeed = 0f;
+    private float _zeroSpeed = 0f; 
 
     private void OnValidate()
     {
-        if (_speed < 0f)
-            _speed = 2f;
+        _speed = Mathf.Max(_speed, 2f);
     }
 
     private void FixedUpdate()
     {
-        if (Input.GetKey(KeyCode.W))
-        {
-            transform.Translate(-_speed * Time.fixedDeltaTime, 0f, 0f);
-        }
-        else if (Input.GetKey(KeyCode.S))
-        {
-            transform.Translate(_speed * Time.fixedDeltaTime, 0f, 0f);
-        }
+        _horizontalSpeed = _zeroSpeed; 
+        _verticalSpeed = Input.GetKey(KeyCode.W) ? -_speed : Input.GetKey(KeyCode.S) ? _speed : _zeroSpeed;
+        transform.Translate(_horizontalSpeed * Time.fixedDeltaTime, _verticalSpeed * Time.fixedDeltaTime, _zeroSpeed);
     }
 }
