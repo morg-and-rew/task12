@@ -8,7 +8,7 @@ public class Door : MonoBehaviour
     {
         if (other.gameObject.TryGetComponent(out Player Player))
         {
-            _siren.OnPlaySiren(); 
+            _siren.PlaySiren(); 
         }
     }
 
@@ -16,7 +16,7 @@ public class Door : MonoBehaviour
     {
         if (other.gameObject.TryGetComponent(out Player Player))
         {
-            _siren.OnStopSiren(); 
+            _siren.StopSiren(); 
         }
     }
 }

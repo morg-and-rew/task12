@@ -10,22 +10,34 @@ public class Siren : MonoBehaviour
 
     private float _maxVolume = 1f;
     private float _minVolume = 0f;
-    private float _fadeTime = 0.1f;
-    private float _magnificationTime = 0.1f;
+    private float _rateOfIncrease = 0.1f;
 
     private bool _isEnter = true;
 
     private Coroutine _currentCoroutine;
-
-    public delegate void SirenStateChanged(bool isOn); 
-    public event SirenStateChanged OnSirenStateChanged; 
 
     private void Start()
     {
         _audioSource.clip = _collisionSound;
     }
 
-    private void _startChangeSirenVolume()
+    public void PlaySiren()
+    {
+        _isEnter = true;
+
+        _audioSource.Play();
+
+        _startSirenVolumeChange();
+    }
+
+    public void StopSiren()
+    {
+        _isEnter = !_isEnter;
+
+        _startSirenVolumeChange();
+    }
+
+    private void _startSirenVolumeChange()
     {
         if (_currentCoroutine != null)
         {
@@ -40,32 +52,13 @@ public class Siren : MonoBehaviour
         var waitForEndOfFrame = new WaitForEndOfFrame();
 
         float targetVolume = increase ? _maxVolume : _minVolume;
-        float time = increase ? _magnificationTime : _fadeTime;
 
         while (_currentVolume != targetVolume)
         {
-            _currentVolume = Mathf.MoveTowards(_currentVolume, targetVolume, time * Time.deltaTime);
+            _currentVolume = Mathf.MoveTowards(_currentVolume, targetVolume, _rateOfIncrease * Time.deltaTime);
             _audioSource.volume = _currentVolume;
 
             yield return waitForEndOfFrame;
         }
-
-        OnSirenStateChanged?.Invoke(_isEnter);
-    }
-
-    public void OnPlaySiren()
-    {
-        _isEnter = true;
-
-        _audioSource.Play();
-
-        _startChangeSirenVolume();
-    }
-
-    public void OnStopSiren()
-    {
-        _isEnter = !_isEnter;
-
-        _startChangeSirenVolume();
     }
 }
