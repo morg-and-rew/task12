@@ -12,7 +12,7 @@ public class Siren : MonoBehaviour
     private float _minVolume = 0f;
     private float _rateOfIncrease = 0.1f;
 
-    private bool _isEnter = true;
+    private bool _isPlaying = false;
 
     private Coroutine _currentCoroutine;
 
@@ -23,35 +23,38 @@ public class Siren : MonoBehaviour
 
     public void PlaySiren()
     {
-        _isEnter = true;
-
-        _audioSource.Play();
-
-        _startSirenVolumeChange();
+        if (!_isPlaying)
+        {
+            _isPlaying = true;
+            _audioSource.Play();
+            StartSirenVolumeChange();
+        }
     }
 
     public void StopSiren()
     {
-        _isEnter = !_isEnter;
-
-        _startSirenVolumeChange();
+        if (_isPlaying)
+        {
+            _isPlaying = false;
+            StartSirenVolumeChange();
+        }
     }
 
-    private void _startSirenVolumeChange()
+    private void StartSirenVolumeChange()
     {
         if (_currentCoroutine != null)
         {
             StopCoroutine(_currentCoroutine);
         }
 
-        _currentCoroutine = StartCoroutine(ChangeVolume(_isEnter));
+        _currentCoroutine = StartCoroutine(ChangeVolume());
     }
 
-    private IEnumerator ChangeVolume(bool increase)
+    private IEnumerator ChangeVolume()
     {
         var waitForEndOfFrame = new WaitForEndOfFrame();
 
-        float targetVolume = increase ? _maxVolume : _minVolume;
+        float targetVolume = _isPlaying ? _maxVolume : _minVolume;
 
         while (_currentVolume != targetVolume)
         {
@@ -59,6 +62,11 @@ public class Siren : MonoBehaviour
             _audioSource.volume = _currentVolume;
 
             yield return waitForEndOfFrame;
+        }
+
+        if (_currentVolume == 0f)
+        {
+            _audioSource.Stop();
         }
     }
 }

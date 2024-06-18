@@ -4,6 +4,12 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private float _speed;
 
+    private void OnValidate()
+    {
+        if (_speed < 0f)
+            _speed = 2f;
+    }
+
     private void FixedUpdate()
     {
         if (Input.GetKey(KeyCode.W))
@@ -14,11 +20,5 @@ public class Player : MonoBehaviour
         {
             transform.Translate(_speed * Time.fixedDeltaTime, 0f, 0f);
         }
-    }
-
-    private void OnValidate()
-    {
-        if (_speed < 0f)
-            _speed = 2f;
     }
 }
